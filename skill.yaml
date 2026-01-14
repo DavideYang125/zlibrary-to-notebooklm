@@ -6,11 +6,11 @@ author: Your Name
 commands:
   - name: login
     description: 登录 Z-Library（仅需一次）
-    usage: python3 bin/login.py
+    usage: python3 scripts/login.py
 
   - name: upload
     description: 下载并上传书籍到 NotebookLM
-    usage: python3 bin/upload.py <Z-Library URL>
+    usage: python3 scripts/upload.py <Z-Library URL>
     arguments:
       - name: url
         description: Z-Library 书籍链接

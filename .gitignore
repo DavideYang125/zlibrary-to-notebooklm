@@ -37,9 +37,16 @@ env/
 .playwright/
 
 # User-specific files
+# Protect sensitive data
 *.json
 !package.json
 !.python-version
+!skill.yaml
+
+# Z-Library session data (IMPORTANT!)
+~/.zlibrary/
+*.storage_state.json
+browser_profile/
 
 # OS
 .DS_Store

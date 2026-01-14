@@ -2,6 +2,22 @@
 
 > 一键将 Z-Library 书籍自动下载并上传到 Google NotebookLM
 
+---
+
+## ⚠️ 重要免责声明
+
+**本项目仅供学习、研究和技术演示用途。请严格遵守当地法律法规及版权规定，仅用于：**
+
+- ✅ 你拥有合法访问权限的资源
+- ✅ 公共领域或开源许可的文档（如 arXiv、Project Gutenberg）
+- ✅ 个人拥有版权或已获授权的内容
+
+**作者不鼓励、不支持任何形式的版权侵权行为，不承担任何法律责任。使用风险自负。**
+
+**请尊重知识产权，支持正版阅读！**
+
+---
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Python 3.8+](https://img.shields.io/badge/python-3.8+-blue.svg)](https://www.python.org/downloads/)
 
@@ -13,13 +29,48 @@
 - 🎯 **格式自适应** - 自动检测并处理多种格式（PDF、EPUB、MOBI 等）
 - 📊 **进度可视化** - 实时显示下载和转换进度
 
-## 🚀 快速开始
+## 🎯 作为 Claude Skill 使用（推荐）
+
+### Claude Skill 安装
+
+```bash
+# 1. 进入 Claude Skills 目录
+cd ~/.claude/skills  # Windows: %APPDATA%\Claude\skills
+
+# 2. 克隆仓库
+git clone https://github.com/zstmfhy/zlibrary-to-notebooklm.git zlib-to-notebooklm
+
+# 3. 完成首次登录
+cd zlib-to-notebooklm
+python3 scripts/login.py
+```
+
+### 使用方式
+
+安装后，在 Claude Code 中直接说：
+
+```text
+用 zlib-to-notebooklm skill 处理这个 Z-Library 链接：
+https://zh.zlib.li/book/25314781/aa05a1/钱的第四维
+```
+
+Claude 会自动：
+
+- 下载书籍（优先 PDF）
+- 创建 NotebookLM 笔记本
+- 上传文件
+- 返回笔记本 ID
+- 建议后续问题
+
+---
+
+## 🛠️ 传统方式安装
 
 ### 1. 安装依赖
 
 ```bash
 # 克隆仓库
-git clone https://github.com/your-username/zlibrary-to-notebooklm.git
+git clone https://github.com/zstmfhy/zlibrary-to-notebooklm.git
 cd zlibrary-to-notebooklm
 
 # 安装 Python 依赖
@@ -32,7 +83,7 @@ playwright install chromium
 ### 2. 登录 Z-Library（仅需一次）
 
 ```bash
-python3 bin/login.py
+python3 scripts/login.py
 ```
 
 **操作步骤：**
@@ -44,7 +95,7 @@ python3 bin/login.py
 ### 3. 下载并上传书籍
 
 ```bash
-python3 bin/upload.py "https://zh.zlib.li/book/..."
+python3 scripts/upload.py "https://zh.zlib.li/book/..."
 ```
 
 **自动完成：**
@@ -61,7 +112,7 @@ python3 bin/upload.py "https://zh.zlib.li/book/..."
 
 ```bash
 # 下载单本书籍
-python3 bin/upload.py "https://zh.zlib.li/book/12345/..."
+python3 scripts/upload.py "https://zh.zlib.li/book/12345/..."
 ```
 
 ### 批量处理
@@ -69,7 +120,7 @@ python3 bin/upload.py "https://zh.zlib.li/book/12345/..."
 ```bash
 # 批量下载多本书
 for url in "url1" "url2" "url3"; do
-    python3 bin/upload.py "$url"
+    python3 scripts/upload.py "$url"
 done
 ```
 
@@ -115,22 +166,20 @@ Z-Library URL
 
 ```
 zlibrary-to-notebooklm/
-├── README.md              # 项目文档
-├── LICENSE                # MIT 许可证
-├── package.json           # npm 配置（用于 Claude Code skill）
-├── skill.yaml             # Skill 定义
-├── bin/                   # 可执行脚本
-│   ├── login.py          # 登录脚本
-│   ├── upload.py         # 上传脚本
-│   └── convert_epub.py   # EPUB 转换工具
-├── src/                   # 源代码
-│   ├── downloader.py     # 下载模块
-│   ├── converter.py      # 转换模块
-│   └── uploader.py       # 上传模块
-└── docs/                  # 文档
-    ├── WORKFLOW.md       # 工作流程详解
-    ├── API.md            # API 文档
-    └── TROUBLESHOOTING.md # 故障排除
+├── SKILL.md              # Skill 核心定义（必需）
+├── README.md             # 项目文档
+├── LICENSE               # MIT 许可证
+├── package.json          # npm 配置（用于 Claude Code skill）
+├── skill.yaml            # Skill 定义
+├── requirements.txt      # Python 依赖
+├── scripts/              # 可执行脚本（官方标准）
+│   ├── login.py         # 登录脚本
+│   ├── upload.py        # 下载+上传脚本
+│   └── convert_epub.py  # EPUB 转换工具
+├── docs/                 # 文档
+│   ├── WORKFLOW.md      # 工作流程详解
+│   └── TROUBLESHOOTING.md # 故障排除
+└── INSTALL.md            # 安装指南
 ```
 
 ## 🔧 配置文件
@@ -156,13 +205,13 @@ zlibrary-to-notebooklm/
 ### 登录
 
 ```bash
-python3 bin/login.py
+python3 scripts/login.py
 ```
 
 ### 上传
 
 ```bash
-python3 bin/upload.py <Z-Library URL>
+python3 scripts/upload.py <Z-Library URL>
 ```
 
 ### 查看会话状态
@@ -175,7 +224,7 @@ ls -lh ~/.zlibrary/storage_state.json
 
 ```bash
 rm ~/.zlibrary/storage_state.json
-python3 bin/login.py
+python3 scripts/login.py
 ```
 
 ## 🤝 贡献

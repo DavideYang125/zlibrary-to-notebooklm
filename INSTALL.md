@@ -41,10 +41,10 @@ npm install -g @google-notebooklm/cli
 
 ```bash
 # 测试登录脚本（不会实际登录）
-python3 bin/login.py --help
+python3 scripts/login.py --help
 
 # 测试上传脚本（不会实际上传）
-python3 bin/upload.py --help
+python3 scripts/upload.py --help
 ```
 
 ## 故障排除
@@ -68,7 +68,7 @@ pyenv global 3.11.0
 
 ```bash
 # macOS/Linux: 添加执行权限
-chmod +x bin/*.py
+chmod +x scripts/*.py
 ```
 
 ## 下一步

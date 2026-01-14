@@ -1,2 +1,12 @@
+# Core dependencies
 playwright>=1.40.0
 ebooklib>=0.18
+
+# Optional utilities for enhanced functionality
+tenacity>=8.2.0  # Retry logic for network operations
+tqdm>=4.65.0     # Progress bars
+
+# Development dependencies (optional)
+# pytest>=7.0.0
+# black>=23.0.0
+# flake8>=6.0.0
