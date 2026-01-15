@@ -19,7 +19,8 @@ commands:
 features:
   - 一次登录，永久使用
   - 优先下载 PDF（保留排版）
-  - 自动降级 EPUB → TXT
+  - 自动降级 EPUB → Markdown
+  - 智能文件分割（>350k 词自动分块）
   - 全自动化流程
   - 实时进度显示
 

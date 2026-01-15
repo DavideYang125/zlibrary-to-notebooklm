@@ -27,7 +27,8 @@
 ## ✨ Features
 
 - 🔐 **One-time Login, Forever Use** - Similar to `notebooklm login` experience
-- 📥 **Smart Download** - Prioritizes PDF (preserves formatting), auto-fallback to EPUB → TXT
+- 📥 **Smart Download** - Prioritizes PDF (preserves formatting), auto-fallback to EPUB → Markdown
+- 📦 **Smart Chunking** - Large files auto-split (>350k words) for reliable CLI upload
 - 🤖 **Fully Automated** - Complete workflow with a single command
 - 🎯 **Format Adaptive** - Automatically detects and processes multiple formats (PDF, EPUB, MOBI, etc.)
 - 📊 **Visual Progress** - Real-time display of download and conversion progress
@@ -102,9 +103,11 @@ python3 scripts/upload.py "https://zh.zlib.li/book/..."
 ```
 
 **Automatically completes:**
+
 - ✅ Login using saved session
 - ✅ Download PDF (preserves formatting)
-- ✅ Fallback to EPUB → TXT
+- ✅ Fallback to EPUB → Markdown
+- ✅ Smart chunking for large files (>350k words)
 - ✅ Create NotebookLM notebook
 - ✅ Upload content
 - ✅ Return notebook ID
@@ -140,7 +143,7 @@ notebooklm ask "Summarize Chapter 3"
 
 ## 🔄 Workflow
 
-```
+```text
 Z-Library URL
     ↓
 1. Launch browser (using saved session)
@@ -149,25 +152,26 @@ Z-Library URL
     ↓
 3. Smart format selection:
    - Priority: PDF (preserves formatting)
-   - Fallback: EPUB (convert to plain text)
+   - Fallback: EPUB (convert to Markdown)
    - Other formats (auto-convert)
     ↓
 4. Download to ~/Downloads
     ↓
 5. Format processing:
    - PDF → Use directly
-   - EPUB → Convert to TXT
+   - EPUB → Convert to Markdown
+   - Check file size → Auto-chunk if >350k words
     ↓
 6. Create NotebookLM notebook
     ↓
-7. Upload content
+7. Upload content (chunked files uploaded individually)
     ↓
 8. Return notebook ID ✅
 ```
 
 ## 📁 Project Structure
 
-```
+```text
 zlibrary-to-notebooklm/
 ├── SKILL.md              # Core Skill definition (required)
 ├── README.md             # Project documentation
@@ -190,7 +194,7 @@ zlibrary-to-notebooklm/
 
 All configurations are saved in `~/.zlibrary/` directory:
 
-```
+```text
 ~/.zlibrary/
 ├── storage_state.json    # Login session (cookies)
 ├── browser_profile/      # Browser data
@@ -230,6 +234,43 @@ ls -lh ~/.zlibrary/storage_state.json
 rm ~/.zlibrary/storage_state.json
 python3 scripts/login.py
 ```
+
+## 📊 NotebookLM Limits
+
+This project is optimized for NotebookLM's actual limitations:
+
+### Official Limits
+- **File Size**: 200MB per file
+- **Words per Source**: 500,000 words
+
+### Practical Recommendations (CLI Tool)
+- **Safe Word Count**: Maximum 350,000-380,000 words per file
+- **Reason**: NotebookLM CLI tool has timeout and API limitations with large files
+
+### Our Solution
+✅ **Automatic File Chunking**:
+- When EPUB is converted to Markdown, the script automatically detects word count
+- Files exceeding 350,000 words are automatically split into multiple smaller files
+- Each chunk is uploaded individually to the same NotebookLM notebook
+- Smart chapter-based splitting preserves content integrity
+
+**Example**:
+```bash
+📊 Word count: 2,700,000
+⚠️  File exceeds 350k words (NotebookLM CLI limit)
+📊 File too large, starting split...
+   Total words: 2,700,000
+   Max per chunk: 350,000 words
+   ✅ Part 1/8: 342,000 words
+   ✅ Part 2/8: 338,000 words
+   ...
+📦 Detected 8 file chunks
+```
+
+### Why 350k Words?
+- Official limit is 500k words, but CLI tools tend to timeout near this limit
+- 350k words is a tested safe value for reliable uploads
+- Web interface can handle larger files directly, but CLI tools require chunking
 
 ## 🤝 Contributing
 

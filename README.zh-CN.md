@@ -27,7 +27,8 @@
 ## ✨ 特性
 
 - 🔐 **一次登录，永久使用** - 类似 `notebooklm login` 的体验
-- 📥 **智能下载** - 优先 PDF（保留排版），自动降级 EPUB → TXT
+- 📥 **智能下载** - 优先 PDF（保留排版），自动降级 EPUB → Markdown
+- 📦 **智能分块** - 大文件自动分割（>350k 词），确保 CLI 上传成功
 - 🤖 **全自动化** - 一条命令完成整个流程
 - 🎯 **格式自适应** - 自动检测并处理多种格式（PDF、EPUB、MOBI 等）
 - 📊 **进度可视化** - 实时显示下载和转换进度
@@ -106,7 +107,8 @@ python3 scripts/upload.py "https://zh.zlib.li/book/..."
 
 - ✅ 使用已保存的会话登录
 - ✅ 优先下载 PDF（保留排版）
-- ✅ 自动降级 EPUB → TXT
+- ✅ 自动降级 EPUB → Markdown
+- ✅ 智能分块大文件（>350k 词）
 - ✅ 创建 NotebookLM 笔记本
 - ✅ 上传内容
 - ✅ 返回笔记本 ID
@@ -142,7 +144,7 @@ notebooklm ask "总结第3章的内容"
 
 ## 🔄 工作流程
 
-```
+```text
 Z-Library URL
     ↓
 1. 启动浏览器（使用已保存的会话）
@@ -151,25 +153,26 @@ Z-Library URL
     ↓
 3. 智能选择格式：
    - 优先 PDF（保留排版）
-   - 备选 EPUB（转换为纯文本）
+   - 备选 EPUB（转换为 Markdown）
    - 其他格式（自动转换）
     ↓
 4. 下载文件到 ~/Downloads
     ↓
 5. 格式处理：
    - PDF → 直接使用
-   - EPUB → 转换为 TXT
+   - EPUB → 转换为 Markdown
+   - 检查文件大小 → 超过 350k 词自动分块
     ↓
 6. 创建 NotebookLM 笔记本
     ↓
-7. 上传内容
+7. 上传内容（分块文件会逐个上传）
     ↓
 8. 返回笔记本 ID ✅
 ```
 
 ## 📁 项目结构
 
-```
+```text
 zlibrary-to-notebooklm/
 ├── SKILL.md              # Skill 核心定义（必需）
 ├── README.md             # 英文项目文档
@@ -192,7 +195,7 @@ zlibrary-to-notebooklm/
 
 所有配置保存在 `~/.zlibrary/` 目录：
 
-```
+```text
 ~/.zlibrary/
 ├── storage_state.json    # 登录会话（cookies）
 ├── browser_profile/      # 浏览器数据
@@ -232,6 +235,43 @@ ls -lh ~/.zlibrary/storage_state.json
 rm ~/.zlibrary/storage_state.json
 python3 scripts/login.py
 ```
+
+## 📊 NotebookLM 限制说明
+
+本项目已针对 NotebookLM 的实际限制进行优化：
+
+### 官方限制
+- **单文件大小**: 200MB
+- **每来源词数**: 500,000 词
+
+### 实际使用建议（CLI 工具）
+- **安全词数**: 每个文件不超过 350,000-380,000 词
+- **原因**: NotebookLM CLI 工具对大文件处理存在超时和 API 限制
+
+### 本项目的解决方案
+✅ **自动文件分块**：
+- 当 EPUB 转换为 Markdown 后，脚本会自动检测词数
+- 超过 350,000 词的文件会自动分割成多个小文件
+- 每个分块会单独上传到同一个 NotebookLM 笔记本
+- 按章节智能分割，保持内容完整性
+
+**示例**：
+```bash
+📊 词数统计: 2,700,000
+⚠️  文件超过 350k 词（NotebookLM CLI 限制）
+📊 文件过大，开始分割...
+   总词数: 2,700,000
+   每块最大: 350,000 词
+   ✅ Part 1/8: 342,000 词
+   ✅ Part 2/8: 338,000 词
+   ...
+📦 检测到 8 个文件分块
+```
+
+### 为什么选择 350k 词作为阈值？
+- 官方限制是 500k 词，但 CLI 工具在接近此限制时容易超时
+- 350k 词是经过测试的安全值，可确保稳定上传
+- 网页界面可以直接上传更大的文件，但 CLI 工具需要分块
 
 ## 🤝 贡献
 

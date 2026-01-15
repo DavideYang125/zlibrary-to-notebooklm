@@ -1,10 +1,8 @@
 # Core dependencies
 playwright>=1.40.0
 ebooklib>=0.18
-
-# Optional utilities for enhanced functionality
-tenacity>=8.2.0  # Retry logic for network operations
-tqdm>=4.65.0     # Progress bars
+beautifulsoup4>=4.11.0  # HTML parsing for EPUB to Markdown conversion
+lxml>=4.9.0  # Faster XML/HTML parser for BeautifulSoup
 
 # Development dependencies (optional)
 # pytest>=7.0.0
