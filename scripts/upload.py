@@ -22,8 +22,8 @@ class ZLibraryAutoUploader:
     """Z-Library 自动下载上传器"""
 
     def __init__(self):
-        self.downloads_dir = Path.home() / "Downloads"
-        self.temp_dir = Path("/tmp")
+        self.downloads_dir = Path("D:\\download")
+        self.temp_dir = Path("D:\\download")
         self.config_dir = Path.home() / ".zlibrary"
         self.config_file = self.config_dir / "config.json"
 
@@ -134,17 +134,24 @@ class ZLibraryAutoUploader:
 
             # 设置下载处理
             download_path = None
+            download_started = False
 
             async def handle_download(download):
-                nonlocal download_path
+                nonlocal download_path, download_started
+                download_started = True
                 print("✅ 检测到下载开始...")
                 suggested_filename = download.suggested_filename
                 print(f"📄 文件名: {suggested_filename}")
                 download_path = self.downloads_dir / suggested_filename
-                await download.save_as(download_path)
-                print(f"💾 已保存: {download_path}")
+                try:
+                    await download.save_as(download_path)
+                    print(f"💾 已保存: {download_path}")
+                except Exception as e:
+                    print(f"⚠️  保存失败: {e}")
 
+            # 同时监听 page 和 browser
             page.on('download', handle_download)
+            browser.on('download', handle_download)
 
             try:
                 # 访问目标页面
@@ -303,7 +310,7 @@ class ZLibraryAutoUploader:
                 print("⬇️  步骤2: 点击下载链接...")
 
                 try:
-                    await download_link.evaluate('el => el.click()')
+                    await download_link.click()
                     print("✅ 点击成功")
                 except Exception as e:
                     print(f"❌ 点击失败: {e}")
@@ -312,7 +319,7 @@ class ZLibraryAutoUploader:
 
                 # 等待下载
                 print("⏳ 步骤3: 等待下载完成...")
-                await asyncio.sleep(20)
+                await asyncio.sleep(30)
 
                 # 检查结果
                 if download_path and download_path.exists():
