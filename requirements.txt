@@ -8,3 +8,4 @@ lxml>=4.9.0  # Faster XML/HTML parser for BeautifulSoup
 # pytest>=7.0.0
 # black>=23.0.0
 # flake8>=6.0.0
+# pip install notebooklm-py
