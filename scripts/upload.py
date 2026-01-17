@@ -614,7 +614,9 @@ class ZLibraryAutoUploader:
 
         # 上传文件
         print(f"📄 上传文件...")
-        cmd = f"notebooklm source add '{file_path}' --json"
+        # 转义文件路径中的特殊字符，并用双引号包裹
+        escaped_path = str(file_path).replace('\\', '\\\\')
+        cmd = f'notebooklm source add "{escaped_path}" --json'
         result = subprocess.run(cmd, shell=True, capture_output=True, text=True)
 
         if result.returncode != 0:
